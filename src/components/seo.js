@@ -9,8 +9,14 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Helmet } from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
+import { useSettings } from "../context/settings"
 
-function SEO({ description, lang, meta, title }) {
+const SEO = ({
+  description = "Web apps, websites, and shopify development.",
+  lang = "en",
+  meta,
+  title = "AppsNWebsites - By Daniel G Adarve",
+}) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -25,11 +31,14 @@ function SEO({ description, lang, meta, title }) {
     `
   )
 
+  const { darkMode } = useSettings()
+
   const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata?.title
+  const defaultTitle = site.siteMetadata.title
 
   return (
     <Helmet
+      defer={false}
       htmlAttributes={{
         lang,
       }}
@@ -57,8 +66,12 @@ function SEO({ description, lang, meta, title }) {
           content: `summary`,
         },
         {
+          name: `twitter:widgets:theme`,
+          content: darkMode ? "dark" : "light",
+        },
+        {
           name: `twitter:creator`,
-          content: site.siteMetadata?.author || ``,
+          content: site.siteMetadata ? site.siteMetadata.author : ``,
         },
         {
           name: `twitter:title`,
@@ -69,7 +82,9 @@ function SEO({ description, lang, meta, title }) {
           content: metaDescription,
         },
       ].concat(meta)}
-    />
+    >
+      <body className={darkMode ? "dark" : "light"} />
+    </Helmet>
   )
 }
 
